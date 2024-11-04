@@ -15,7 +15,17 @@ public:
 	void SetName(const std::string& name) { m_Name = name; }
 	const std::string& GetName() { return m_Name; }
 
-	void SetDrawable(bool value) { m_Drawable = value; }
+	void SetDrawable(bool value)
+	{
+		m_Drawable = value;
+		if (m_ChildrenComponents.size() > 0)
+		{
+			for (std::shared_ptr<Component> child : m_ChildrenComponents)
+			{
+				child->SetDrawable(value);
+			}
+		}
+	}
 	bool IsDrawable() const { return m_Drawable; }
 
 	void SetID(const uint64_t& id) { m_ComponentID = id; }
@@ -23,10 +33,9 @@ public:
 
 	std::shared_ptr<Component> GetParent() { return m_ParentComponent; }
 
-	void SetParent(std::shared_ptr<Component> parent)
+	virtual void SetParent(std::shared_ptr<Component> parent)
 	{
 		m_ParentComponent = parent;
-		m_ParentComponent->AddChildren(std::shared_ptr<Component>(this));
 	}
 
 	std::vector<std::shared_ptr<Component>>& GetChildrenComponents()
@@ -54,8 +63,6 @@ public:
 			<< " which does not exists. Children name: "
 			<< component->GetName()
 			<< "\n";
-
-		return;
 	}
 
 	void DeleteAllChildrens()

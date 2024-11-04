@@ -30,6 +30,12 @@
     <ClCompile Include="src\ECS\Entity\Console.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\ECS\Components\Text.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ResourceManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Application.h">
@@ -54,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\Components\TransformComponent.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ResourceManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

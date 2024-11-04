@@ -12,6 +12,8 @@
 //#include "../TransformComponent.h"
 //#include "../Rectangle.h"
 
+class Component;
+
 class ComponentsManager
 {
 public:
@@ -50,6 +52,22 @@ public:
 		}
 
 		return nullptr;
+	}
+
+	template<class ComponentType, class ChildrenType>
+	void AddComponentChildren(std::shared_ptr<ComponentType> parent, std::shared_ptr<ChildrenType> child)
+	{
+		std::shared_ptr<Component> parent_ptr = std::dynamic_pointer_cast<Component>(parent);
+		std::shared_ptr<Component> child_ptr = std::dynamic_pointer_cast<Component>(child);
+
+		if (!parent_ptr || !child_ptr)
+		{
+			std::cerr << "Invalid components\n";
+			return;
+		}
+
+		child_ptr->SetParent(parent_ptr);
+		parent_ptr->AddChildren(child_ptr);
 	}
 
 	template<typename ComponentType>

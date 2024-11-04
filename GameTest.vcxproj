@@ -105,6 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)external\raylib\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -120,6 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -129,6 +131,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\ResourceManager.cpp" />
+    <ClCompile Include="src\ECS\Components\Text.h" />
     <ClCompile Include="src\ECS\Entity\Console.cpp" />
     <ClCompile Include="src\ECS\Components\Rectangle.h" />
     <ClCompile Include="src\Renderer.cpp" />
@@ -136,6 +140,7 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\ECS\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\Entity\Console.h" />
     <ClInclude Include="src\ECS\Entity\Base\Entity.h" />

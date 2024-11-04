@@ -22,7 +22,6 @@ namespace ecs
 
 		~Rectangle()
 		{
-			std::cout << "[~Rectangle] Deleting component " << this->GetName() << "\n";
 		};
 		
 		void OnUpdate()
@@ -37,17 +36,22 @@ namespace ecs
 
 		void OnDraw()
 		{
+			if (!this->IsDrawable())
+			{
+				return;
+			}
+
 			if (this->GetParent())
 			{
 				std::shared_ptr<DrawableComponent> parentComponent  = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
 				
-				if (parentComponent && parentComponent->IsDrawable())
+				if (parentComponent)
 				{
 					std::shared_ptr<DrawableComponent> component = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
-
+		
 					DrawRectangle(
-						static_cast<int>(this->GetTransform()->position.x + parentComponent->GetTransform()->position.x),
-						static_cast<int>(this->GetTransform()->position.y + parentComponent->GetTransform()->position.y),
+						static_cast<int>(this->GetTransform()->position.x + parentComponent->GetAbsolutePosition().position.x),
+						static_cast<int>(this->GetTransform()->position.y + parentComponent->GetAbsolutePosition().position.y),
 						width,
 						height,
 						color
@@ -58,6 +62,21 @@ namespace ecs
 			{
 				DrawRectangle(this->GetTransform()->position.x, this->GetTransform()->position.y, width, height, color);
 			}
+		}
+
+		bool MouseHover()
+		{
+			const Vector2 mousePos = GetMousePosition();
+		
+			if (mousePos.x >= this->GetAbsolutePosition().position.x
+				&& mousePos.x <= this->GetAbsolutePosition().position.x + width
+				&& mousePos.y >= this->GetAbsolutePosition().position.y
+				&& mousePos.y <= this->GetAbsolutePosition().position.y + height)
+			{
+				return true;
+			}
+
+			return false;
 		}
 
 		int width;
