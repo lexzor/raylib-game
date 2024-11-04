@@ -12,6 +12,8 @@ void Application::Init()
 {
 	SetWindowState(FLAG_WINDOW_RESIZABLE);
 	InitWindow(1300, 800, "TagME!");
+
+	m_Console.Init();
 }
 
 void Application::Run()

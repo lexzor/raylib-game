@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "Renderer.h"
 #include "ECS/Components/Rectangle.h"
+#include "ECS/Entity/Console.h"
 
 class Application
 {
@@ -16,5 +17,5 @@ private:
 	void OnFrame();
 
 	Renderer m_Renderer;
-	std::shared_ptr<ecs::Rectangle> m_Rectangle;
+	Console m_Console;
 };

@@ -138,7 +138,7 @@
   <ItemGroup>
     <ClInclude Include="src\ECS\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\Entity\Console.h" />
-    <ClInclude Include="src\ECS\Entity\Entity.h" />
+    <ClInclude Include="src\ECS\Entity\Base\Entity.h" />
     <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\ECS\Components\Base\DrawableComponent.h" />
     <ClInclude Include="src\ECS\Components\Base\Component.h" />

@@ -47,7 +47,7 @@
     <ClInclude Include="src\Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\ECS\Entity\Entity.h">
+    <ClInclude Include="src\ECS\Entity\Base\Entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ECS\Entity\Console.h">
