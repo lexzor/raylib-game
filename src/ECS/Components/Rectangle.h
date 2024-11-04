@@ -10,9 +10,9 @@ namespace ecs
 	class Rectangle : public DrawableComponent
 	{
 	public:
-		Rectangle() : x(0), y(0), width(0), height(0), color{255,255,255,255} {}
+		Rectangle() : width(0), height(0), color{255,255,255,255} {}
 		Rectangle(int x, int y, int width, int height, Color color)
-			: x(x), y(y), width(width), height(height), color(color)
+			: width(width), height(height), color(color)
 		{
 		}
 
@@ -27,11 +27,31 @@ namespace ecs
 
 		void OnDraw()
 		{
-			std::cout << "OnDraw\n";
-			DrawRectangle(x, y, width, height, color);
+			if (this->GetParent() != nullptr)
+			{
+				if (this->GetParent()->IsDrawable())
+				{
+					std::shared_ptr<DrawableComponent> component = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
+				
+					const TransformComponent* parentTransform = component->GetTransform();
+
+					DrawRectangle(
+						this->GetTransform()->position.x + parentTransform->position.x,
+						this->GetTransform()->position.y + parentTransform->position.y,
+						width,
+						height,
+						color
+					);
+				}
+			}
+			else
+			{
+				DrawRectangle(this->GetTransform()->position.x, this->GetTransform()->position.y, width, height, color);
+			}
 		}
 
-		int x, y, width, height;
+		int width;
+		int height;
 		Color color;
 	};
 }

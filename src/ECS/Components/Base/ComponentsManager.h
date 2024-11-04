@@ -6,6 +6,11 @@
 #include <memory>
 #include <cstdint>
 #include <functional>
+#include <string>
+#include <type_traits>
+#include <iostream>
+//#include "../TransformComponent.h"
+//#include "../Rectangle.h"
 
 class ComponentsManager
 {
@@ -27,6 +32,10 @@ public:
 		std::shared_ptr<ComponentType> component = std::make_shared<ComponentType>(std::forward<Args>(args)...);
 		m_ComponentsMap.push_back(static_cast<std::shared_ptr<Component>>(component));
 
+		component->SetID(m_ComponentsMap.size());
+
+		std::cout << "Added component. ID: " << component->GetID() << "\n";
+
 		return component;
 	}
 
@@ -46,7 +55,21 @@ public:
 	{
 		for (auto& componentPtr : m_ComponentsMap)
 		{
-			func(std::dynamic_pointer_cast<ComponentType>(componentPtr));
+			if (!componentPtr)
+			{
+				std::cerr << "Inexistent componentPtr " << __func__ << "::" << __LINE__ << "\n";
+				continue;
+			}
+
+			std::shared_ptr<ComponentType> castedCompPtr = std::dynamic_pointer_cast<ComponentType>(componentPtr);
+
+			if (!castedCompPtr)
+			{
+
+				continue;
+			}
+
+			func(castedCompPtr);
 		}
 	}
 
