@@ -18,7 +18,11 @@ public:
 	using ComponentsPtrMap = std::vector<std::shared_ptr<Component>>;
 public:
 	ComponentsManager() {};
-	~ComponentsManager() {};
+	~ComponentsManager()
+	{
+		std::cout << "[~ComponentsManager] Destructing..\n";
+		m_ComponentsMap.clear();
+	};
 
 	static ComponentsManager& GetInstance()
 	{
@@ -30,11 +34,9 @@ public:
 	std::shared_ptr<ComponentType> CreateComponent(Args&& ...args)
 	{
 		std::shared_ptr<ComponentType> component = std::make_shared<ComponentType>(std::forward<Args>(args)...);
-		m_ComponentsMap.push_back(static_cast<std::shared_ptr<Component>>(component));
+		m_ComponentsMap.push_back(std::move(static_cast<std::shared_ptr<Component>>(component)));
 
 		component->SetID(m_ComponentsMap.size());
-
-		std::cout << "Added component. ID: " << component->GetID() << "\n";
 
 		return component;
 	}
@@ -65,12 +67,16 @@ public:
 
 			if (!castedCompPtr)
 			{
-
 				continue;
 			}
 
 			func(castedCompPtr);
 		}
+	}
+
+	ComponentsPtrMap& GetAllComponents()
+	{
+		return m_ComponentsMap;
 	}
 
 private:

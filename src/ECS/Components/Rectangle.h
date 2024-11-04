@@ -14,10 +14,15 @@ namespace ecs
 		Rectangle(int x, int y, int width, int height, Color color)
 			: width(width), height(height), color(color)
 		{
+			Vector3* position = &this->GetTransform()->position;
+			position->x = static_cast<float>(x);
+			position->y = static_cast<float>(y);
+			position->z = 0.0f;
 		}
 
 		~Rectangle()
 		{
+			std::cout << "[~Rectangle] Deleting component " << this->GetName() << "\n";
 		};
 		
 		void OnUpdate()
@@ -25,19 +30,24 @@ namespace ecs
 
 		}
 
+		std::string ToString() override
+		{
+			return std::string("Position: ") + this->GetTransform()->ToString() + std::string("\nWidth, Height: ") + std::to_string(width) + ", " + std::to_string(height);
+		}
+
 		void OnDraw()
 		{
-			if (this->GetParent() != nullptr)
+			if (this->GetParent())
 			{
-				if (this->GetParent()->IsDrawable())
+				std::shared_ptr<DrawableComponent> parentComponent  = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
+				
+				if (parentComponent && parentComponent->IsDrawable())
 				{
 					std::shared_ptr<DrawableComponent> component = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
-				
-					const TransformComponent* parentTransform = component->GetTransform();
 
 					DrawRectangle(
-						this->GetTransform()->position.x + parentTransform->position.x,
-						this->GetTransform()->position.y + parentTransform->position.y,
+						static_cast<int>(this->GetTransform()->position.x + parentComponent->GetTransform()->position.x),
+						static_cast<int>(this->GetTransform()->position.y + parentComponent->GetTransform()->position.y),
 						width,
 						height,
 						color

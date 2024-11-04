@@ -7,8 +7,10 @@
 class Component
 {
 public:
+	//virtual ~Component() { std::cout << "[~Component] deleting component " << this->GetName() << "\n"; };
 	virtual ~Component() = default;
 	virtual void OnUpdate() = 0;
+	virtual std::string ToString() = 0;
 
 	void SetName(const std::string& name) { m_Name = name; }
 	const std::string& GetName() { return m_Name; }
@@ -43,7 +45,6 @@ public:
 
 		if (children != m_ChildrenComponents.end())
 		{
-			children->reset();
 			m_ChildrenComponents.erase(children);
 			return;
 		}
@@ -59,11 +60,6 @@ public:
 
 	void DeleteAllChildrens()
 	{
-		for (std::shared_ptr<Component> child : m_ChildrenComponents)
-		{
-			child.reset();
-		}
-
 		m_ChildrenComponents.clear();
 	}
 

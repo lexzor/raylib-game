@@ -16,14 +16,15 @@ public:
 
 	virtual ~DrawableComponent() = default;
 	virtual void OnUpdate() = 0;
+	virtual std::string ToString() = 0;
 	virtual void OnDraw() = 0;
 
 	void SetParentRelativeness(bool value) { m_IsRelativeToParent = value; }
 	bool GetParentRelativeness() const { return m_IsRelativeToParent; }
 
-	const TransformComponent* GetTransform()
+	std::shared_ptr<TransformComponent> GetTransform()
 	{
-		return m_TransformComponent.get();
+		return m_TransformComponent;
 	}
 
 private:
