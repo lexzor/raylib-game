@@ -131,6 +131,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\CameraController3D.cpp" />
+    <ClCompile Include="src\EntityCreator.cpp" />
+    <ClCompile Include="src\ConsoleCommands.cpp" />
+    <ClCompile Include="src\DeveloperConsole.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
     <ClCompile Include="src\ECS\Components\Text.h" />
     <ClCompile Include="src\ECS\Entity\Console.cpp" />
@@ -140,6 +144,11 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\CameraController3D.h" />
+    <ClInclude Include="external\raylib\include\rcamera.h" />
+    <ClInclude Include="src\EntityCreator.h" />
+    <ClInclude Include="src\ConsoleCommands.h" />
+    <ClInclude Include="src\DeveloperConsole.h" />
     <ClInclude Include="src\ResourceManager.h" />
     <ClInclude Include="src\ECS\Components\TransformComponent.h" />
     <ClInclude Include="src\ECS\Entity\Console.h" />

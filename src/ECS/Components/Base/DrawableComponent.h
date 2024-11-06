@@ -19,9 +19,6 @@ public:
 	virtual void OnDraw() = 0;
 	virtual std::string ToString() = 0;
 
-	void SetParentRelativeness(bool value) { m_IsRelativeToParent = value; }
-	bool GetParentRelativeness() const { return m_IsRelativeToParent; }
-
 	TransformComponent GetAbsolutePosition()
 	{
 		if (this->GetParent())
@@ -52,6 +49,5 @@ public:
 	}
 
 private:
-	bool m_IsRelativeToParent = false;
 	std::shared_ptr<TransformComponent> m_TransformComponent ;
 };

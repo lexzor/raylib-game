@@ -10,6 +10,7 @@ namespace ecs
 			: text("Text"), size(12), color{ 255, 0, 0, 255 }, font(nullptr), spacing(1.0f)
 		{
 		}
+
 		Text(int x, int y, const std::string& text, int size, Color color, std::shared_ptr<Font> font = nullptr, float spacing = 1.0)
 			: text(text), size(size), color(color), font(font), spacing(spacing)
 		{
@@ -95,7 +96,7 @@ namespace ecs
 			const Vector2 mousePos = GetMousePosition();
 
 			if (mousePos.x >= this->GetAbsolutePosition().position.x
-				&& mousePos.x <= this->GetAbsolutePosition().position.x + size
+				&& mousePos.x <= this->GetAbsolutePosition().position.x + MeasureText(text.c_str(), size)
 				&& mousePos.y >= this->GetAbsolutePosition().position.y
 				&& mousePos.y <= this->GetAbsolutePosition().position.y + size)
 			{
