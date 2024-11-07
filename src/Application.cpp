@@ -14,21 +14,21 @@ void Application::Init()
 {
 	SetWindowState(FLAG_WINDOW_RESIZABLE);
 	InitWindow(1300, 800, "TagME!");
+	DisableCursor();
 
 	//SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
 	ResourceManager::GetInstance().PrecacheFont("coolvetica_regular.otf");
 	ResourceManager::GetInstance().PrecacheFont("bebas_neue_regular.otf");
-	
-	DeveloperConsole::GetInstance().InitConsole();
-	DisableCursor();
+
+	m_GUI.Init();
+	DeveloperConsole::GetInstance().SetConsole(m_GUI.GetConsole());
 
 	m_Commands.Init();
 }
 
 void Application::Run()
 {
-	CameraController3D cameraController{};
 
 	while (!WindowShouldClose())
 	{
@@ -36,13 +36,13 @@ void Application::Run()
 		ClearBackground({ 0, 0, 0, 255 });
 		DrawFPS(10, 10);
 
-		cameraController.BeginCamera();
-		DrawGrid(10, 1.0f); // Draw a grid for orientation
+		m_Camera.BeginCameraDraw();
+		DrawGrid(20, 1.0f); // Draw a grid for orientation
 		DrawCube({ 0, 1, 0 }, 1, 1, 1, RED); // Sample object in the scene
-		cameraController.OnUpdate();
-		cameraController.EndCamera();
-
+		m_Camera.OnFrame();
+		m_Camera.EndCameraDraw();
 		OnFrame();
+		
 		EndDrawing();
 	}
 
@@ -51,6 +51,6 @@ void Application::Run()
 
 void Application::OnFrame()
 {
-	DeveloperConsole::GetInstance().m_Console->OnFrame();
+	m_GUI.OnFrame();
 	m_Renderer.Draw();
 }

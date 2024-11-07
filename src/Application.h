@@ -4,7 +4,8 @@
 #include "ECS/Components/Rectangle.h"
 #include "ECS/Entity/Console.h"
 #include "ConsoleCommands.h"
-#include "CameraController3D.h"
+#include "GUI/GUI.h"
+#include "CameraController.h"
 
 class Application
 {
@@ -20,5 +21,6 @@ private:
 
 	Renderer m_Renderer = {};
 	ConsoleCommands m_Commands = {};
-	Camera m_Camera = {};
+	CameraController m_Camera = {};
+	GUI m_GUI = {};
 };

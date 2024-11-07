@@ -13,14 +13,13 @@
 
 class DeveloperConsole
 {
-	friend class Application;
 public:
 	static DeveloperConsole& GetInstance();
 
-	void InitConsole();
+	void SetConsole(std::shared_ptr<Console> console_ptr);
 	void PrintConsoleMessage(const std::string& text, const Color& color = WHITE);
 	void RegisterConCommand(const std::string& cmd, Console::OnConsoleInputFnPtr fn);
 
 private:
-	std::unique_ptr<Console> m_Console = nullptr;
+	std::shared_ptr<Console> m_Console = nullptr;
 };

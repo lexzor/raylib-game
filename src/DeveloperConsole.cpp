@@ -6,10 +6,9 @@ DeveloperConsole& DeveloperConsole::GetInstance()
 	return instance;
 }
 
-void DeveloperConsole::InitConsole()
+void DeveloperConsole::SetConsole(std::shared_ptr<Console> console_ptr)
 {
-	m_Console = std::make_unique<Console>();
-	m_Console->Init();
+	m_Console = console_ptr;
 }
 
 void DeveloperConsole::PrintConsoleMessage(const std::string& text, const Color& color)
