@@ -117,7 +117,8 @@ void Console::CreateConsoleMessagesEntities()
 	{
 		for (std::shared_ptr<ecs::Text> messages : m_MessagesComponentsMap)
 		{
-			ComponentsManager::get().DeleteComponent(messages->GetID());
+			// TODO: Get rid of first argument...
+			ComponentsManager::get().DeleteComponent(ComponentDimension::TwoD,messages->GetID());
 		}
 
 		m_MessagesComponentsMap.clear();
