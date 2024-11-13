@@ -201,9 +201,14 @@ public:
 		}
 	}
 
-	ComponentsPtrMap& GetAllComponents()
+	ComponentsPtrMap& GetAllComponents(const ComponentDimension type)
 	{
-		return m_ComponentsMap;
+		if (type == ComponentDimension::TwoD)
+		{
+			return m_ComponentsMap;
+		}
+
+		return m_3DComponentsMap;
 	}
 
 private:
