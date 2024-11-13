@@ -2,6 +2,7 @@
 
 #include "Base/Component.h"
 #include "raylib.h"
+#include <iostream>
 
 class TransformComponent : public Component
 {
@@ -18,7 +19,15 @@ public:
 		position.z = z;
 	}
 
-	~TransformComponent() {}
+	~TransformComponent()
+	{
+		std::cout << "Destroyed component " << this->GetName() << " with id " << this->GetID() << "\n";
+		
+		if (this->GetParent())
+		{
+			std::cout << "Parent: " << this->GetParent()->GetName() << "\n";
+		}
+	}
 
 	void OnUpdate() override
 	{

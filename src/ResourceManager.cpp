@@ -8,9 +8,14 @@ ResourceManager::~ResourceManager()
     {
         UnloadFont(*(map_pair.second));
     }
+
+    for (auto& map_pair : m_ModelsMap)
+    {
+        UnloadModel(*(map_pair.second));
+    }
 }
 
-ResourceManager& ResourceManager::GetInstance()
+ResourceManager& ResourceManager::get()
 {
     static ResourceManager instance;
     return instance;
@@ -18,7 +23,7 @@ ResourceManager& ResourceManager::GetInstance()
 
 std::shared_ptr<Font> ResourceManager::PrecacheFont(const std::string& file)
 {
-    const std::optional<std::string> path = ResourceExists(file);
+    const std::optional<std::string> path = ResourceExists(FONTS_DIRECTORY, file);
     if (!path.has_value())
     {
         std::cerr << "Failed to find font '" << file << "'\n";
@@ -67,9 +72,63 @@ std::vector<std::string> ResourceManager::GetAvailableFonts()
     return fonts;
 }
 
-std::optional<std::string> ResourceManager::ResourceExists(const std::string& file)
+std::shared_ptr<Model> ResourceManager::PrecacheModel(const std::string& file)
 {
-    std::filesystem::path path = std::filesystem::current_path() / MAIN_RESOURCES_DIRECTORY / FONTS_DIRECTORY / file;
+    const std::optional<std::string> path = ResourceExists(MODELS_DIRECTORY, file);
+    if (!path.has_value())
+    {
+        std::cerr << "Failed to find model '" << file << "'\n";
+        return nullptr;
+    }
+
+    const std::optional<std::string> name = GetFileName(file);
+    if (!name.has_value())
+    {
+        std::cerr << "Failed to get file name of model '" << file << "' (extension checking failed).\n";
+        return nullptr;
+    }
+
+    Model model = LoadModel(path.value().c_str());
+    if (model.meshCount == 0)
+    {
+        std::cerr << "Failed to load model '" << file << "'\n";
+        return nullptr;
+    }
+
+    m_ModelsMap[name.value()] = std::move(std::make_shared<Model>(model));
+    return m_ModelsMap[name.value()];
+}
+
+std::shared_ptr<Texture> ResourceManager::PrecacheTexture(const std::string& file)
+{
+    const std::optional<std::string> path = ResourceExists(MODELS_DIRECTORY, file);
+    if (!path.has_value())
+    {
+        std::cerr << "Failed to find texture '" << file << "'\n";
+        return nullptr;
+    }
+
+    const std::optional<std::string> name = GetFileName(file);
+    if (!name.has_value())
+    {
+        std::cerr << "Failed to get file name of texture '" << file << "' (extension checking failed).\n";
+        return nullptr;
+    }
+
+    Texture texture = LoadTexture(path.value().c_str());
+    if (texture.id == 0)
+    {
+        std::cerr << "Failed to load texture '" << file << "'\n";
+        return nullptr;
+    }
+
+    m_TexturesMap[name.value()] = std::move(std::make_shared<Texture>(texture));
+    return m_TexturesMap[name.value()];
+}
+
+std::optional<std::string> ResourceManager::ResourceExists(const char* directory, const std::string& file)
+{
+    std::filesystem::path path = std::filesystem::current_path() / MAIN_RESOURCES_DIRECTORY / directory / file;
 
     if (!std::filesystem::exists(path))
     {

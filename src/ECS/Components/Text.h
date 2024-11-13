@@ -14,7 +14,7 @@ namespace ecs
 		Text(int x, int y, const std::string& text, int size, Color color, std::shared_ptr<Font> font = nullptr, float spacing = 1.0)
 			: text(text), size(size), color(color), font(font), spacing(spacing)
 		{
-			Vector3* position = &this->GetTransform()->position;
+			Vector3* position = &this->position;
 			position->x = static_cast<float>(x);
 			position->y = static_cast<float>(y);
 			position->z = 0.0f;
@@ -22,12 +22,10 @@ namespace ecs
 
 		~Text()
 		{
-
 		}
 
 		void OnUpdate()
 		{
-
 		}
 	
 		void OnDraw()
@@ -43,17 +41,16 @@ namespace ecs
 
 				if (parentComponent)
 				{
-					std::shared_ptr<DrawableComponent> component = std::dynamic_pointer_cast<DrawableComponent>(this->GetParent());
-
+					Vector2 absolutePosition{ 0 };
+					absolutePosition.x = this->position.x + parentComponent->GetAbsolutePosition().x;
+					absolutePosition.y = this->position.y + parentComponent->GetAbsolutePosition().y;
+					
 					if (font != nullptr)
-					{
+					{	
 						DrawTextEx(
 							*(font.get()),
 							text.c_str(),
-							Vector2(
-								this->GetTransform()->position.x + parentComponent->GetAbsolutePosition().position.x,
-								this->GetTransform()->position.y + parentComponent->GetAbsolutePosition().position.y
-							),
+							absolutePosition,
 							size,
 							spacing,
 							color
@@ -63,22 +60,32 @@ namespace ecs
 					{
 						DrawText(
 							text.c_str(),
-							this->GetTransform()->position.x + parentComponent->GetAbsolutePosition().position.x,
-							this->GetTransform()->position.y + parentComponent->GetAbsolutePosition().position.y,
+							absolutePosition.x,
+							absolutePosition.y,
 							size,
 							color
 						);
 					}
+
+					if (ShouldDrawBorder())
+					{
+						Vector2 sizes = MeasureTextEx((*font.get()), text.c_str(), size, spacing);
+						DrawRectangleLines(absolutePosition.x, absolutePosition.y, sizes.x, sizes.y, border_color);
+					}
+				}
+				else
+				{
+					std::cerr << "Component " << this->GetID() << "." << this->GetName() << " can't be drawn because parent it's invalid\n";
 				}
 			}
 			else
 			{
-				if (font != nullptr)
+				if (font)
 				{
 					DrawTextEx(
 						*(font.get()),
 						text.c_str(),
-						Vector2(this->GetTransform()->position.x, this->GetTransform()->position.y),
+						Vector2(this->position.x, this->position.y),
 						size,
 						spacing,
 						color
@@ -86,7 +93,13 @@ namespace ecs
 				}
 				else
 				{
-					DrawText(text.c_str(), this->GetTransform()->position.x, this->GetTransform()->position.y, size, color);
+					DrawText(text.c_str(), this->position.x, this->position.y, size, color);
+				}
+
+				if (ShouldDrawBorder())
+				{
+					Vector2 sizes = MeasureTextEx((*font.get()), text.c_str(), size, spacing);
+					DrawRectangleLines(this->position.x, this->position.y, sizes.x, sizes.y, border_color);
 				}
 			}
 		}
@@ -95,10 +108,10 @@ namespace ecs
 		{
 			const Vector2 mousePos = GetMousePosition();
 
-			if (mousePos.x >= this->GetAbsolutePosition().position.x
-				&& mousePos.x <= this->GetAbsolutePosition().position.x + MeasureText(text.c_str(), size)
-				&& mousePos.y >= this->GetAbsolutePosition().position.y
-				&& mousePos.y <= this->GetAbsolutePosition().position.y + size)
+			if (mousePos.x >= this->GetAbsolutePosition().x
+				&& mousePos.x <= this->GetAbsolutePosition().x + MeasureText(text.c_str(), size)
+				&& mousePos.y >= this->GetAbsolutePosition().y
+				&& mousePos.y <= this->GetAbsolutePosition().y + size)
 			{
 				return true;
 			}

@@ -6,8 +6,8 @@
 
 class Component
 {
+	friend class ComponentsManagar;
 public:
-	//virtual ~Component() { std::cout << "[~Component] deleting component " << this->GetName() << "\n"; };
 	virtual ~Component() = default;
 	virtual void OnUpdate() = 0;
 	virtual std::string ToString() = 0;
@@ -64,11 +64,12 @@ public:
 
 	void DeleteChildren(std::shared_ptr<Component> component)
 	{
-		std::vector<std::shared_ptr<Component> >::iterator children = std::find(m_ChildrenComponents.begin(), m_ChildrenComponents.end(), component);
+		std::vector<std::shared_ptr<Component>>::iterator children = std::find(m_ChildrenComponents.begin(), m_ChildrenComponents.end(), component);
 
 		if (children != m_ChildrenComponents.end())
 		{
 			m_ChildrenComponents.erase(children);
+			std::cout << "Deleted children " << component->GetName() << " of " << this->GetName() << "\n";
 			return;
 		}
 
@@ -91,5 +92,5 @@ private:
 	std::shared_ptr<Component> m_ParentComponent = nullptr;
 	std::vector<std::shared_ptr<Component>> m_ChildrenComponents;
 	std::string m_Name = "NameNotSet";
-	uint64_t m_ComponentID;
+	uint64_t m_ComponentID = -1;
 };

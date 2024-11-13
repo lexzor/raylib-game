@@ -133,7 +133,6 @@
   <ItemGroup>
     <ClCompile Include="src\CameraController.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
-    <ClCompile Include="src\EntityCreator.cpp" />
     <ClCompile Include="src\ConsoleCommands.cpp" />
     <ClCompile Include="src\DeveloperConsole.cpp" />
     <ClCompile Include="src\ResourceManager.cpp" />
@@ -148,7 +147,6 @@
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="external\raylib\include\rcamera.h" />
-    <ClInclude Include="src\EntityCreator.h" />
     <ClInclude Include="src\ConsoleCommands.h" />
     <ClInclude Include="src\DeveloperConsole.h" />
     <ClInclude Include="src\ResourceManager.h" />

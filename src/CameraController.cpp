@@ -28,7 +28,7 @@ void CameraController::EndCameraDraw()
 
 void CameraController::OnFrame()
 {
-    static const float moveSpeed = 2.5f;
+    static const float moveSpeed = 22.5f;
     static const float turnSpeed = 0.1f;
 
     static Vector2 currentMousePosition = { 0.0f };

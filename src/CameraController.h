@@ -1,7 +1,7 @@
 #pragma once
 #include "raylib.h"
 
-#define CAMERA_MOVE_SPEED                               0.4f       // Units per second
+#define CAMERA_MOVE_SPEED                               5.4f       // Units per second
 #define CAMERA_ROTATION_SPEED                           0.03f
 #define CAMERA_PAN_SPEED                                0.2f
 

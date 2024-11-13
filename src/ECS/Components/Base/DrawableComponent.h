@@ -10,16 +10,15 @@ public:
 	DrawableComponent()
 	{
 		SetDrawable(true);
-		m_TransformComponent = ComponentsManager::GetInstance().CreateComponent<TransformComponent>();
-		m_TransformComponent->SetName("DrawableTransformComponent");
 	}
 
 	virtual ~DrawableComponent() = default;
+
 	virtual void OnUpdate() = 0;
 	virtual void OnDraw() = 0;
 	virtual std::string ToString() = 0;
 
-	TransformComponent GetAbsolutePosition()
+	Vector3 GetAbsolutePosition()
 	{
 		if (this->GetParent())
 		{
@@ -27,27 +26,26 @@ public:
 
 			if (parentComponent)
 			{	
-				TransformComponent component{};
-				component.position.x = parentComponent->GetAbsolutePosition().position.x + m_TransformComponent->position.x;
-				component.position.y = parentComponent->GetAbsolutePosition().position.y + m_TransformComponent->position.y;
-				component.position.z = parentComponent->GetAbsolutePosition().position.z + m_TransformComponent->position.z;
-				
-				return component;
+				return Vector3({
+					.x = parentComponent->GetAbsolutePosition().x + position.x,
+					.y = parentComponent->GetAbsolutePosition().y + position.y,
+					.z = parentComponent->GetAbsolutePosition().z + position.z,
+				});
 			}
 
-			return { m_TransformComponent->position.x, m_TransformComponent->position.y, m_TransformComponent->position.z };
+			return Vector3{ position.x, position.y, position.z };
 		}
 
-		//std::cout << "returned local position\n";
-
-		return { m_TransformComponent->position.x, m_TransformComponent->position.y, m_TransformComponent->position.z };
+		return Vector3{ position.x, position.y, position.z };
 	}
 
-	std::shared_ptr<TransformComponent> GetTransform()
-	{
-		return m_TransformComponent;
-	}
+	bool ShouldDrawBorder() const { return m_DrawBorders; }
+	void SetBordersDrawing(bool value) { m_DrawBorders = value; }
+
+public:
+	Vector3 position{0};
+	Color border_color = { 255, 255, 255, 255 };
 
 private:
-	std::shared_ptr<TransformComponent> m_TransformComponent ;
+	bool m_DrawBorders = false;
 };

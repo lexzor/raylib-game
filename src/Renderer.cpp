@@ -10,7 +10,7 @@ Renderer::~Renderer()
 
 void Renderer::Draw()
 {
-	ComponentsManager::GetInstance().DoForEachEntity<DrawableComponent>([](std::shared_ptr<DrawableComponent> component) {
+	ComponentsManager::get().DoForEachEntity<DrawableComponent>([](std::shared_ptr<DrawableComponent> component) {
 		if (component->IsDrawable())
 		{
 			component->OnDraw();

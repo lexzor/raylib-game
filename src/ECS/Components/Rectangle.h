@@ -17,18 +17,15 @@ namespace ecs
 		Rectangle(int x, int y, int width, int height, Color color)
 			: width(width), height(height), color(color)
 		{
-			Vector3* position = &this->GetTransform()->position;
+			Vector3* position = &this->position;
 			position->x = static_cast<float>(x);
 			position->y = static_cast<float>(y);
 			position->z = 0.0f;
 		}
-
+		
 		~Rectangle()
 		{
-		};
-		
-		bool GetBordersDrawing() const { return m_DrawBorders; }
-		void SetBordersDrawing(bool value) { m_DrawBorders = value; }
+		}
 
 		void OnUpdate()
 		{
@@ -36,7 +33,7 @@ namespace ecs
 
 		std::string ToString() override
 		{
-			return std::string("Position: ") + this->GetTransform()->ToString() + std::string("\nWidth, Height: ") + std::to_string(width) + ", " + std::to_string(height);
+			return std::string("ToString not implemented for Rectangle");
 		}
 
 		void OnDraw()
@@ -53,41 +50,17 @@ namespace ecs
 				if (parentComponent)
 				{
 					DrawRectangle(
-						static_cast<int>(this->GetAbsolutePosition().position.x),
-						static_cast<int>(this->GetAbsolutePosition().position.y),
+						static_cast<int>(this->GetAbsolutePosition().x),
+						static_cast<int>(this->GetAbsolutePosition().y),
 						width,
 						height,
 						color
 					);
-
-					//TODO: Implement border drawing, each childs of the component should automatically calculate their position and size
-
-					//if (m_DrawBorders)
-					//{
-					//	DrawRectangleLinesEx({
-					//		.x = this->GetTransform()->position.x + parentComponent->GetAbsolutePosition().position.x - border_thickness,
-					//		.y = this->GetTransform()->position.y + parentComponent->GetAbsolutePosition().position.y - border_thickness,
-					//		.width = static_cast<float>(width) + border_thickness,
-					//		.height = static_cast<float>(height) + border_thickness
-					//	}, 
-					//		border_thickness, border_color);
-					//}
 				}
 			}
 			else
 			{
-				DrawRectangle(this->GetTransform()->position.x, this->GetTransform()->position.y, width, height, color);
-
-				//if (m_DrawBorders)
-				//{
-				//	DrawRectangleLinesEx({
-				//		.x = this->GetTransform()->position.x - border_thickness,
-				//		.y = this->GetTransform()->position.y - border_thickness,
-				//		.width = static_cast<float>(width) + border_thickness,
-				//		.height = static_cast<float>(height) + border_thickness
-				//		},
-				//		border_thickness, border_color);
-				//}
+				DrawRectangle(this->position.x, this->position.y, width, height, color);
 			}
 		}
 
@@ -95,10 +68,10 @@ namespace ecs
 		{
 			const Vector2 mousePos = GetMousePosition();
 		
-			if (mousePos.x >= this->GetAbsolutePosition().position.x
-				&& mousePos.x <= this->GetAbsolutePosition().position.x + width
-				&& mousePos.y >= this->GetAbsolutePosition().position.y
-				&& mousePos.y <= this->GetAbsolutePosition().position.y + height)
+			if (mousePos.x >= this->GetAbsolutePosition().x
+				&& mousePos.x <= this->GetAbsolutePosition().x + width
+				&& mousePos.y >= this->GetAbsolutePosition().y
+				&& mousePos.y <= this->GetAbsolutePosition().y + height)
 			{
 				return true;
 			}
@@ -109,8 +82,5 @@ namespace ecs
 		int width;
 		int height;
 		Color color;
-
-	private:
-		bool m_DrawBorders = false;
 	};
 }

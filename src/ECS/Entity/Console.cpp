@@ -15,28 +15,28 @@ void Console::Init()
 	int y = (GetScreenHeight() - height) / 2;
 
 	// Creating developer console 2d components
-	m_TitleFont = ResourceManager::GetInstance().GetFontByName(TITLE_FONT);
-	m_MessagesFont = ResourceManager::GetInstance().GetFontByName(MESSAGES_FONT);
+	m_TitleFont = ResourceManager::get().GetFontByName(TITLE_FONT);
+	m_MessagesFont = ResourceManager::get().GetFontByName(MESSAGES_FONT);
 
-	m_Window = ComponentsManager::GetInstance().CreateComponent<ecs::Rectangle>(x, y, width, height, WINDOW_BG_COLOR);
+	m_Window = ComponentsManager::get().CreateComponent<ecs::Rectangle>(x, y, width, height, WINDOW_BG_COLOR);
 	m_Window->SetDrawable(false);
 
-	m_Topbar = ComponentsManager::GetInstance().CreateComponent<ecs::Rectangle>(0, 0, width, 30, TOPBAR_BG_COLOR);
-	m_Title = ComponentsManager::GetInstance().CreateComponent<ecs::Text>(20, m_Topbar->height / 2 - m_TitleFontSize / 2, "Developer Console", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
-	m_CloseButton = ComponentsManager::GetInstance().CreateComponent<ecs::Text>(m_Topbar->GetTransform()->position.x + m_Topbar->width - m_TitleFontSize, m_Topbar->height / 2 - m_TitleFontSize / 2, "X", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
-	m_Input = ComponentsManager::GetInstance().CreateComponent<ecs::Rectangle>(0, height - 30, width, 35, INPUT_BG_COLOR);
-	m_InputText = ComponentsManager::GetInstance().CreateComponent<ecs::Text>(10, m_Input->height / 2 - m_MessagesFontSize / 2, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing);
+	m_Topbar = ComponentsManager::get().CreateComponent<ecs::Rectangle>(0, 0, width, 30, TOPBAR_BG_COLOR);
+	m_Title = ComponentsManager::get().CreateComponent<ecs::Text>(20, m_Topbar->height / 2 - m_TitleFontSize / 2, "Developer Console", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
+	m_CloseButton = ComponentsManager::get().CreateComponent<ecs::Text>(m_Topbar->position.x + m_Topbar->width - m_TitleFontSize, m_Topbar->height / 2 - m_TitleFontSize / 2, "X", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
+	m_Input = ComponentsManager::get().CreateComponent<ecs::Rectangle>(0, height - 30, width, 35, INPUT_BG_COLOR);
+	m_InputText = ComponentsManager::get().CreateComponent<ecs::Text>(10, m_Input->height / 2 - m_MessagesFontSize / 2, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing);
 
-	m_ContentBox = ComponentsManager::GetInstance().CreateComponent<ecs::Rectangle>(15, (m_Topbar->height + m_Input->height) / 2, width - 30, height - m_Input->height - m_Topbar->height - 10, Color{100, 0, 0, 120});
+	m_ContentBox = ComponentsManager::get().CreateComponent<ecs::Rectangle>(15, m_Topbar->height, width - 30, height - m_Input->height - m_Topbar->height, Color{100, 0, 0, 120});
 	m_ContentBox->SetDrawable(false);
 	m_ContentBox->SetExplicitLogic(true);
 
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Rectangle>(m_Window, m_Topbar);
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Text>(m_Topbar, m_Title);
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Text>(m_Topbar, m_CloseButton);
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Rectangle>(m_Window, m_Input);
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Text>(m_Input, m_InputText);
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Rectangle>(m_Window, m_ContentBox);
+	ComponentsManager::get().AddComponentChildren(m_Window, m_Topbar);
+	ComponentsManager::get().AddComponentChildren(m_Topbar, m_Title);
+	ComponentsManager::get().AddComponentChildren(m_Topbar, m_CloseButton);
+	ComponentsManager::get().AddComponentChildren(m_Window, m_Input);
+	ComponentsManager::get().AddComponentChildren(m_Input, m_InputText);
+	ComponentsManager::get().AddComponentChildren(m_Window, m_ContentBox);
 
 	m_Window->SetName("[Console::Window]");
 	m_Topbar->SetName("[Console::Topbar]");
@@ -45,6 +45,8 @@ void Console::Init()
 	m_Input->SetName("[Console::Input]");
 	m_InputText->SetName("[Console::InputText]");
 	m_ContentBox->SetName("[Console::ContentBox]");
+
+	CreateConsoleMessagesEntities();
 }
 
 void Console::OnFrame()
@@ -55,7 +57,6 @@ void Console::OnFrame()
 	// check if ` button has been pressed and toggle the rendering of the console
 	CheckToggleShow();
 
-
 	if (!m_Window->IsDrawable())
 	{
 		return;
@@ -63,6 +64,7 @@ void Console::OnFrame()
 
 	CheckTopbarHover();
 	CheckInputAction();
+	CheckMouseScroll();
 
 	if (m_IsTyping)
 	{
@@ -73,7 +75,6 @@ void Console::OnFrame()
 
 	m_LastFrameMousePos = GetMousePosition();
 }
-
 
 void Console::RegisterCommand(const std::string& cmd, OnConsoleInputFnPtr func)
 {
@@ -99,14 +100,97 @@ void Console::ChangeMessagesFontSize(int size)
 
 void Console::CheckMessageDrawingByPos(std::shared_ptr<ecs::Text> message)
 {
-	if (message->GetAbsolutePosition().position.y < m_ContentBox->GetAbsolutePosition().position.y
-		|| message->GetAbsolutePosition().position.y > m_ContentBox->GetAbsolutePosition().position.y + m_ContentBox->height
-		|| message->GetAbsolutePosition().position.x < m_ContentBox->GetAbsolutePosition().position.x
-		|| message->GetAbsolutePosition().position.x > m_ContentBox->GetAbsolutePosition().position.x + m_ContentBox->width
+	if (message->GetAbsolutePosition().y < m_ContentBox->GetAbsolutePosition().y
+		|| message->GetAbsolutePosition().y > m_ContentBox->GetAbsolutePosition().y + m_ContentBox->height
+		|| message->GetAbsolutePosition().x < m_ContentBox->GetAbsolutePosition().x
+		|| message->GetAbsolutePosition().x > m_ContentBox->GetAbsolutePosition().x + m_ContentBox->width
 		)
 	{
 		message->SetDrawable(false);
 		message->SetExplicitLogic(true);
+	}
+}
+
+void Console::CreateConsoleMessagesEntities()
+{
+	if (m_MessagesComponentsMap.size() > 0)
+	{
+		for (std::shared_ptr<ecs::Text> messages : m_MessagesComponentsMap)
+		{
+			ComponentsManager::get().DeleteComponent(messages->GetID());
+		}
+
+		m_MessagesComponentsMap.clear();
+	}
+
+	float textHeight = MeasureTextEx((*m_MessagesFont.get()), "A", m_MessagesFontSize + 2, m_TextSpacing).y;
+	unsigned short messagesCount = m_ContentBox->height / static_cast<int>(textHeight);
+
+	for (unsigned short iter = 0; iter < messagesCount; iter++)
+	{
+		std::shared_ptr<ecs::Text> message = ComponentsManager::get().CreateComponent<ecs::Text>(
+			10, 0, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing
+		);
+
+		ComponentsManager::get().AddComponentChildren(m_ContentBox, message);
+		message->position.y = m_ContentBox->height - ((iter + 1) * LINE_HEIGHT_MESSAGES) - ((iter + 1) * m_MessagesSpace);
+
+		if (m_Messages.size() > 0 && iter < m_Messages.size())
+		{
+			message->text = (m_Messages.rbegin() + iter)->c_str();
+		}
+		else
+		{
+			message->text = "";
+		}
+
+		message->SetName("[Console::Message" + std::to_string(iter) + "]");
+		message->SetDrawable(m_Window->IsDrawable());
+
+		m_MessagesComponentsMap.push_back(message);
+	}
+}
+
+void Console::CheckMouseScroll()
+{
+	if (!m_ContentBox->MouseHover())
+	{
+		return;
+	}
+
+	int totalMessages = m_Messages.size();
+	int totalMessagesEntities = m_MessagesComponentsMap.size();
+
+	if(totalMessages - 1 < totalMessagesEntities)
+	{
+		return;
+	}
+	
+	float y = GetMouseWheelMove();
+
+	if (y == 0.0f)
+		return;
+
+	if (totalMessagesEntities + m_CurrentMouseWheelY > totalMessages - 1 && y > 0.0f)
+	{
+		return;
+	}
+
+	m_CurrentMouseWheelY += y;
+
+	if (m_CurrentMouseWheelY < 0)
+	{
+		m_CurrentMouseWheelY = 0;
+	}
+
+	if (m_CurrentMouseWheelY > totalMessages - 1)
+	{
+		m_CurrentMouseWheelY = totalMessages - 1;
+	}
+
+	for (std::size_t iter = 0; std::shared_ptr<ecs::Text> message : m_MessagesComponentsMap)
+	{
+		message->text = (m_Messages.rbegin() + m_CurrentMouseWheelY + iter++)->data();
 	}
 }
 
@@ -134,34 +218,21 @@ void Console::TriggerOnConsoleInputEvent(const std::string& text, const Color& c
 
 void Console::CreateMessage(const std::string& text, const Color& color)
 {
-	std::shared_ptr<ecs::Text> message = ComponentsManager::GetInstance().CreateComponent<ecs::Text>(
-		0, 0,
-		text,
-		m_MessagesFontSize,
-		color,
-		m_MessagesFont,
-		m_TextSpacing
-	);
+	m_Messages.push_back(text);
 
-	ComponentsManager::GetInstance().AddComponentChildren<ecs::Rectangle, ecs::Text>(m_ContentBox, message);
-	message->SetDrawable(m_Window->IsDrawable());
-
-	if (m_MessagesComponentsMap.size())
+	for (unsigned short iter = 0; std::shared_ptr<ecs::Text> message : m_MessagesComponentsMap)
 	{
-		message->GetTransform()->position.y = m_MessagesComponentsMap.back()->GetTransform()->position.y;
-
-		for (std::shared_ptr<ecs::Text> map_message : m_MessagesComponentsMap)
+		if (iter < m_Messages.size())
 		{
-			map_message->GetTransform()->position.y -= LINE_HEIGHT_MESSAGES;
-			CheckMessageDrawingByPos(map_message);
+			message->text = (m_Messages.rbegin() + iter)->data();
 		}
-	}
-	else
-	{
-		message->GetTransform()->position.y = m_ContentBox->height - LINE_HEIGHT_MESSAGES;
-	}
+		else
+		{
+			break;
+		}
 
-	m_MessagesComponentsMap.push_back(message);
+		iter++;
+	}
 }
 
 void Console::CheckInput()
@@ -243,8 +314,8 @@ void Console::CheckInput()
 	if (m_SelectedInputText)
 	{
 		DrawRectangle(
-			m_InputText->GetAbsolutePosition().position.x - 2,
-			m_InputText->GetAbsolutePosition().position.y - 2,
+			m_InputText->GetAbsolutePosition().x - 2,
+			m_InputText->GetAbsolutePosition().y - 2,
 			MeasureText(m_InputText->text.c_str(), m_InputText->size) + 4,
 			m_InputText->size + 4,
 			{ 255, 255, 255, 60 }
@@ -260,8 +331,8 @@ void Console::CheckToggleShow()
 
 		if (m_Window->IsDrawable())
 		{
-			//m_Window->GetTransform()->position.x = (GetScreenWidth() - m_Window->width) / 2.0;
-			//m_Window->GetTransform()->position.y = (GetScreenHeight() - m_Window->height) / 2.0;
+			//m_Window->position.x = (GetScreenWidth() - m_Window->width) / 2.0;
+			//m_Window->position.y = (GetScreenHeight() - m_Window->height) / 2.0;
 			m_IsTyping = true;
 			EnableCursor();
 		}
@@ -278,32 +349,18 @@ void Console::CheckWindowResize()
 	{
 		m_Window->width = GetScreenWidth() / 2;
 		m_Window->height = GetScreenHeight() / 2;
-		//m_Window->GetTransform()->position.x = (GetScreenWidth() - m_Window->width) / 2.0;
-		//m_Window->GetTransform()->position.y = (GetScreenHeight() - m_Window->height) / 2.0;
+		//m_Window->position.x = (GetScreenWidth() - m_Window->width) / 2.0;
+		//m_Window->position.y = (GetScreenHeight() - m_Window->height) / 2.0;
 		m_Topbar->width = m_Window->width;
-		m_CloseButton->GetTransform()->position.x = m_Topbar->GetTransform()->position.x + m_Topbar->width - 20;
+		m_CloseButton->position.x = m_Topbar->position.x + m_Topbar->width - 20;
 		m_Input->width = m_Window->width;
-		m_Input->GetTransform()->position.y = m_Window->height - m_Input->height;
+		m_Input->position.y = m_Window->height - m_Input->height;
 		m_ContentBox->width = m_Window->width - 10;
 		m_ContentBox->height = m_Window->height - m_Input->height - m_Topbar->height - 4;
-		m_ContentBox->GetTransform()->position.y = (m_Topbar->height + m_Input->height) / 2.0;
-		m_ContentBox->GetTransform()->position.x = 10.0 / 2.0 ;
+		m_ContentBox->position.y = (m_Topbar->height + m_Input->height) / 2.0;
+		m_ContentBox->position.x = 10.0 / 2.0 ;
 
-		if (m_MessagesComponentsMap.size() > 1)
-		{
-			m_MessagesComponentsMap.back()->GetTransform()->position.y = m_ContentBox->height - LINE_HEIGHT_MESSAGES;
-
-			auto prevIter = m_MessagesComponentsMap.rbegin();
-			for (auto iter = m_MessagesComponentsMap.rbegin() + 1; iter != m_MessagesComponentsMap.rend(); iter++)
-			{
-				(*iter)->GetTransform()->position.y = (*prevIter)->GetTransform()->position.y - LINE_HEIGHT_MESSAGES;
-				prevIter = iter;
-			}
-		}
-		else
-		{
-			m_MessagesComponentsMap.front()->GetTransform()->position.y = m_ContentBox->height - LINE_HEIGHT_MESSAGES;
-		}
+		CreateConsoleMessagesEntities();
 	}
 }
 
@@ -316,14 +373,14 @@ void Console::CheckTopbarHover()
 		if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
 		{
 			Vector2 newConsolePosition{};
-			newConsolePosition.x = m_Window->GetTransform()->position.x + (GetMousePosition().x - m_LastFrameMousePos.x);
-			newConsolePosition.y = m_Window->GetTransform()->position.y + (GetMousePosition().y - m_LastFrameMousePos.y);
+			newConsolePosition.x = m_Window->position.x + (GetMousePosition().x - m_LastFrameMousePos.x);
+			newConsolePosition.y = m_Window->position.y + (GetMousePosition().y - m_LastFrameMousePos.y);
 
 			if (newConsolePosition.x + m_Window->width > 50 && newConsolePosition.x < GetScreenWidth() - 50
 				&& newConsolePosition.y > 0 && newConsolePosition.y < GetScreenHeight() - m_Topbar->height)
 			{
-				m_Window->GetTransform()->position.x = newConsolePosition.x;
-				m_Window->GetTransform()->position.y = newConsolePosition.y;
+				m_Window->position.x = newConsolePosition.x;
+				m_Window->position.y = newConsolePosition.y;
 			}
 		}
 	}

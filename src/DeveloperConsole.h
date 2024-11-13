@@ -4,17 +4,17 @@
 #include <string>
 #include <memory>
 
-#define DevCon() DeveloperConsole::GetInstance()
+#define DevCon() DeveloperConsole::get()
 
-#define conprint(message) DeveloperConsole::GetInstance().PrintConsoleMessage(message, WHITE)
-#define conprint_r(message) DeveloperConsole::GetInstance().PrintConsoleMessage(message, RED)
-#define conprint_y(message) DeveloperConsole::GetInstance().PrintConsoleMessage(message, YELLOW)
-#define conprint_g(message) DeveloperConsole::GetInstance().PrintConsoleMessage(message, GREEN)
+#define conprint(message) DeveloperConsole::get().PrintConsoleMessage(message, WHITE)
+#define conprint_r(message) DeveloperConsole::get().PrintConsoleMessage(message, RED)
+#define conprint_y(message) DeveloperConsole::get().PrintConsoleMessage(message, YELLOW)
+#define conprint_g(message) DeveloperConsole::get().PrintConsoleMessage(message, GREEN)
 
 class DeveloperConsole
 {
 public:
-	static DeveloperConsole& GetInstance();
+	static DeveloperConsole& get();
 
 	void SetConsole(std::shared_ptr<Console> console_ptr);
 	void PrintConsoleMessage(const std::string& text, const Color& color = WHITE);

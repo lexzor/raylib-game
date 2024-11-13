@@ -45,6 +45,8 @@ private:
 	void CreateMessage(const std::string& text, const Color& color);
 	void TriggerOnConsoleInputEvent(const std::string& text, const Color& color);
 	void CheckMessageDrawingByPos(std::shared_ptr<ecs::Text> message);
+	void CreateConsoleMessagesEntities();
+	void CheckMouseScroll();
 
 private:
 	std::shared_ptr<ecs::Rectangle> m_Window = nullptr;
@@ -59,6 +61,8 @@ private:
 	std::shared_ptr<Font> m_MessagesFont = nullptr;
 	int m_TitleFontSize = 25;
 	int m_MessagesFontSize = 19;
+	int m_MessagesSpace = 5;
+	int m_CurrentMouseWheelY = 0;
 	float m_TextSpacing = 1.3f;
 
 	bool m_IsTyping = false;

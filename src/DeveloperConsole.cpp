@@ -1,6 +1,6 @@
 #include "DeveloperConsole.h"
 
-DeveloperConsole& DeveloperConsole::GetInstance()
+DeveloperConsole& DeveloperConsole::get()
 {
 	static DeveloperConsole instance;
 	return instance;
