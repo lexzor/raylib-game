@@ -46,7 +46,7 @@ void ConsoleCommands::Init()
 
 void ConsoleCommands::PrintFonts(const std::string& input)
 {
-	ResourceManager::ResourceList fontsList = ResourceManager::get().GetAvailableFonts();
+	ResourceManager::ResourcesList fontsList = ResourceManager::get().GetAvailableFonts();
 
 	conprint_g("Total available fonts: " + std::to_string(fontsList.size()));
 

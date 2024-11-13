@@ -18,16 +18,16 @@ void Console::Init()
 	m_TitleFont = ResourceManager::get().GetFontByName(TITLE_FONT);
 	m_MessagesFont = ResourceManager::get().GetFontByName(MESSAGES_FONT);
 
-	m_Window = ComponentsManager::get().CreateComponent<ecs::Rectangle>(x, y, width, height, WINDOW_BG_COLOR);
+	m_Window = ComponentsManager::get().Create2DComponent<ecs::Rectangle>(x, y, width, height, WINDOW_BG_COLOR);
 	m_Window->SetDrawable(false);
 
-	m_Topbar = ComponentsManager::get().CreateComponent<ecs::Rectangle>(0, 0, width, 30, TOPBAR_BG_COLOR);
-	m_Title = ComponentsManager::get().CreateComponent<ecs::Text>(20, m_Topbar->height / 2 - m_TitleFontSize / 2, "Developer Console", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
-	m_CloseButton = ComponentsManager::get().CreateComponent<ecs::Text>(m_Topbar->position.x + m_Topbar->width - m_TitleFontSize, m_Topbar->height / 2 - m_TitleFontSize / 2, "X", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
-	m_Input = ComponentsManager::get().CreateComponent<ecs::Rectangle>(0, height - 30, width, 35, INPUT_BG_COLOR);
-	m_InputText = ComponentsManager::get().CreateComponent<ecs::Text>(10, m_Input->height / 2 - m_MessagesFontSize / 2, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing);
+	m_Topbar = ComponentsManager::get().Create2DComponent<ecs::Rectangle>(0, 0, width, 30, TOPBAR_BG_COLOR);
+	m_Title = ComponentsManager::get().Create2DComponent<ecs::Text>(20, m_Topbar->height / 2 - m_TitleFontSize / 2, "Developer Console", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
+	m_CloseButton = ComponentsManager::get().Create2DComponent<ecs::Text>(m_Topbar->position.x + m_Topbar->width - m_TitleFontSize, m_Topbar->height / 2 - m_TitleFontSize / 2, "X", m_TitleFontSize, FONT_COLOR, m_TitleFont, m_TextSpacing);
+	m_Input = ComponentsManager::get().Create2DComponent<ecs::Rectangle>(0, height - 30, width, 35, INPUT_BG_COLOR);
+	m_InputText = ComponentsManager::get().Create2DComponent<ecs::Text>(10, m_Input->height / 2 - m_MessagesFontSize / 2, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing);
 
-	m_ContentBox = ComponentsManager::get().CreateComponent<ecs::Rectangle>(15, m_Topbar->height, width - 30, height - m_Input->height - m_Topbar->height, Color{100, 0, 0, 120});
+	m_ContentBox = ComponentsManager::get().Create2DComponent<ecs::Rectangle>(15, m_Topbar->height, width - 30, height - m_Input->height - m_Topbar->height, Color{100, 0, 0, 120});
 	m_ContentBox->SetDrawable(false);
 	m_ContentBox->SetExplicitLogic(true);
 
@@ -128,7 +128,7 @@ void Console::CreateConsoleMessagesEntities()
 
 	for (unsigned short iter = 0; iter < messagesCount; iter++)
 	{
-		std::shared_ptr<ecs::Text> message = ComponentsManager::get().CreateComponent<ecs::Text>(
+		std::shared_ptr<ecs::Text> message = ComponentsManager::get().Create2DComponent<ecs::Text>(
 			10, 0, "", m_MessagesFontSize + 2, FONT_COLOR, m_MessagesFont, m_TextSpacing
 		);
 

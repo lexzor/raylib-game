@@ -8,9 +8,19 @@ Renderer::~Renderer()
 {
 }
 
-void Renderer::Draw()
+void Renderer::Draw2D()
 {
-	ComponentsManager::get().DoForEachEntity<DrawableComponent>([](std::shared_ptr<DrawableComponent> component) {
+	ComponentsManager::get().DoForEach2DEntity<DrawableComponent>([](std::shared_ptr<DrawableComponent> component) {
+		if (component->IsDrawable())
+		{
+			component->OnDraw();
+		}
+	});
+}
+
+void Renderer::Draw3D()
+{
+	ComponentsManager::get().DoForEach3DEntity<DrawableComponent>([](std::shared_ptr<DrawableComponent> component) {
 		if (component->IsDrawable())
 		{
 			component->OnDraw();

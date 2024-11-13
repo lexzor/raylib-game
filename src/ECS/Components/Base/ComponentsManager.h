@@ -30,7 +30,7 @@ public:
 	}
 
 	template<class ComponentType, typename ...Args>
-	std::shared_ptr<ComponentType> CreateComponent(Args&& ...args)
+	std::shared_ptr<ComponentType> Create2DComponent(Args&& ...args)
 	{
 		std::shared_ptr<ComponentType> component = std::make_shared<ComponentType>(std::forward<Args>(args)...);
 
@@ -45,6 +45,30 @@ public:
 		else
 		{
 			m_ComponentsMap.push_back(component);
+			component->SetID(m_ComponentsMap.size() - 1);
+		}
+
+		std::cout << "Created component with id " << component->GetID() << "\n";
+
+		return component;
+	}
+
+	template<class ComponentType, typename ...Args>
+	std::shared_ptr<ComponentType> Create3DComponent(Args&& ...args)
+	{
+		std::shared_ptr<ComponentType> component = std::make_shared<ComponentType>(std::forward<Args>(args)...);
+
+		if (m_AvailableIDs.size())
+		{
+			std::size_t availableID = m_3DAvailableIDs.back();
+			m_3DAvailableIDs.pop_back();
+
+			component->SetID(availableID);
+			m_3DComponentsMap[availableID] = component;
+		}
+		else
+		{
+			m_3DComponentsMap.push_back(component);
 			component->SetID(m_ComponentsMap.size() - 1);
 		}
 
@@ -105,9 +129,31 @@ public:
 	}
 
 	template<typename ComponentType>
-	void DoForEachEntity(std::function<void(std::shared_ptr<ComponentType>)> func)
+	void DoForEach2DEntity(std::function<void(std::shared_ptr<ComponentType>)> func)
 	{
 		for (auto& componentPtr : m_ComponentsMap)
+		{
+			if (!componentPtr)
+			{
+				std::cerr << "Inexistent componentPtr " << __func__ << "::" << __LINE__ << "\n";
+				continue;
+			}
+
+			std::shared_ptr<ComponentType> castedCompPtr = std::dynamic_pointer_cast<ComponentType>(componentPtr);
+
+			if (!castedCompPtr)
+			{
+				continue;
+			}
+
+			func(castedCompPtr);
+		}
+	}
+
+	template<typename ComponentType>
+	void DoForEach3DEntity(std::function<void(std::shared_ptr<ComponentType>)> func)
+	{
+		for (auto& componentPtr : m_3DComponentsMap)
 		{
 			if (!componentPtr)
 			{
@@ -133,5 +179,7 @@ public:
 
 private:
 	ComponentsPtrMap m_ComponentsMap;
+	ComponentsPtrMap m_3DComponentsMap;
 	std::vector<std::size_t> m_AvailableIDs;
+	std::vector<std::size_t> m_3DAvailableIDs;
 };

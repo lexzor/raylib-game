@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Base/DrawableComponent.h"
 #include "raylib.h"
 
@@ -7,12 +9,12 @@ namespace ecs
 	{
 	public:
 		Text() 
-			: text("Text"), size(12), color{ 255, 0, 0, 255 }, font(nullptr), spacing(1.0f)
+			: text("Text"), size(12), color{ 255, 0, 0, 255 }, font(nullptr), spacing(1.0f), draw_borders(false), border_color({ 255,0,0,255 })
 		{
 		}
 
-		Text(int x, int y, const std::string& text, int size, Color color, std::shared_ptr<Font> font = nullptr, float spacing = 1.0)
-			: text(text), size(size), color(color), font(font), spacing(spacing)
+		Text(int x, int y, const std::string& text, int size, Color color, std::shared_ptr<Font> font = nullptr, float spacing = 1.0, bool draw_borders = false, Color border_color = {255,255,255,255})
+			: text(text), size(size), color(color), font(font), spacing(spacing), draw_borders(draw_borders), border_color(color)
 		{
 			Vector3* position = &this->position;
 			position->x = static_cast<float>(x);
@@ -118,6 +120,8 @@ namespace ecs
 
 			return false;
 		}
+
+		bool ShouldDrawBorder() const { return draw_borders; }
 	
 		std::string ToString()
 		{
@@ -129,5 +133,7 @@ namespace ecs
 		Color color;
 		std::shared_ptr<Font> font;
 		float spacing;
+		bool draw_borders;
+		Color border_color;
 	};
 }

@@ -8,7 +8,7 @@
 class ResourceManager
 {
 public:
-	using ResourceList = std::vector<std::string>;
+	using ResourcesList = std::vector<std::string>;
 public:
 	const char* MAIN_RESOURCES_DIRECTORY = "assets";
 	const char* FONTS_DIRECTORY = "fonts";
@@ -19,10 +19,13 @@ public:
 	static ResourceManager& get();
 
 	std::shared_ptr<Font> PrecacheFont(const std::string& file);
-	std::shared_ptr<Font> GetFontByName(const std::string& font);
-	ResourceList GetAvailableFonts();
+	std::shared_ptr<Font> GetFontByName(const std::string& name);
+	ResourcesList GetAvailableFonts();
 
 	std::shared_ptr<Model> PrecacheModel(const std::string& file);
+	std::shared_ptr<Model> GetModelByName(const std::string& name);
+	ResourcesList GetAvailableModels();
+
 	std::shared_ptr<Texture> PrecacheTexture(const std::string& file);
 
 private:

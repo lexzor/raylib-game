@@ -9,5 +9,6 @@ public:
 	Renderer();
 	~Renderer();
 
-	void Draw();
+	void Draw2D();
+	void Draw3D();
 };

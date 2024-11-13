@@ -48,28 +48,31 @@ std::shared_ptr<Font> ResourceManager::PrecacheFont(const std::string& file)
     return m_FontsMap[name.value()];
 }
 
-std::shared_ptr<Font> ResourceManager::GetFontByName(const std::string& font)
+std::shared_ptr<Font> ResourceManager::GetFontByName(const std::string& name)
 {
-    if (m_FontsMap.find(font) == m_FontsMap.end())
+    if (m_FontsMap.find(name) == m_FontsMap.end())
     {
-        std::cerr << "Failed to get font with name '" << font << "'\n";
+        std::cerr << "Failed to get model with name '" << name << "'\n";
         return nullptr;
     }
 
-    return m_FontsMap[font];
+    return m_FontsMap[name];
 }
 
-std::vector<std::string> ResourceManager::GetAvailableFonts()
+ResourceManager::ResourcesList ResourceManager::GetAvailableFonts()
 {
-    std::vector<std::string> fonts;
-    fonts.resize(m_FontsMap.size());
-
-    for (std::size_t iter = 0; const auto& pair : m_FontsMap)
+    if (m_FontsMap.size())
     {
-        fonts[iter++] = pair.first;
+        ResourcesList fonts = ResourcesList(m_FontsMap.size());
+        for (std::size_t iter = 0; const auto& pair : m_FontsMap)
+        {
+            fonts[iter++] = pair.first;
+        }
+
+        return fonts;
     }
 
-    return fonts;
+    return ResourcesList();
 }
 
 std::shared_ptr<Model> ResourceManager::PrecacheModel(const std::string& file)
@@ -94,9 +97,37 @@ std::shared_ptr<Model> ResourceManager::PrecacheModel(const std::string& file)
         std::cerr << "Failed to load model '" << file << "'\n";
         return nullptr;
     }
-
+  
     m_ModelsMap[name.value()] = std::move(std::make_shared<Model>(model));
     return m_ModelsMap[name.value()];
+}
+
+std::shared_ptr<Model> ResourceManager::GetModelByName(const std::string& name)
+{
+    if (m_ModelsMap.find(name) == m_ModelsMap.end())
+    {
+        std::cerr << "Failed to get model with name '" << name << "'\n";
+        return nullptr;
+    }
+
+    return m_ModelsMap[name];
+}
+
+ResourceManager::ResourcesList ResourceManager::GetAvailableModels()
+{
+    if (m_ModelsMap.size())
+    {
+        ResourcesList models(m_ModelsMap.size());
+
+        for (std::size_t iter = 0; const auto & pair : m_ModelsMap)
+        {
+            models[iter++] = pair.first;
+        }
+
+        return models;
+    }
+
+    return ResourcesList();
 }
 
 std::shared_ptr<Texture> ResourceManager::PrecacheTexture(const std::string& file)

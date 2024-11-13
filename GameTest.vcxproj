@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\EntityCreator.cpp" />
     <ClCompile Include="src\CameraController.cpp" />
     <ClCompile Include="src\GUI\GUI.cpp" />
     <ClCompile Include="src\ConsoleCommands.cpp" />
@@ -144,6 +145,8 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\EntityCreator.h" />
+    <ClInclude Include="src\ECS\Components\Model.h" />
     <ClInclude Include="src\CameraController.h" />
     <ClInclude Include="src\GUI\GUI.h" />
     <ClInclude Include="external\raylib\include\rcamera.h" />
